@@ -1,40 +1,40 @@
 # docker-oracle-setup
-<!-- TOC -->
 
-- [docker-oracle-setup](#docker-oracle-setup)
-  - [Known Issues / Future Improvements](#known-issues-future-improvements)
-  - [References](#references)
-  - [Background](#background)
-    - [Port Mapping](#port-mapping)
-    - [Passwords](#passwords)
-    - [Download Files](#download-files)
-    - [Laptop Folder Structure](#laptop-folder-structure)
-    - [Oracle Container Registry Setup](#oracle-container-registry-setup)
-  - [Setup](#setup)
-    - [Directory structure](#directory-structure)
-    - [Docker Network](#docker-network)
-    - [Docker Images](#docker-images)
-      - [Get Oracle Image](#get-oracle-image)
-      - [ORDS](#ords)
-      - [Docker Image Confirmation](#docker-image-confirmation)
-  - [Docker Containers](#docker-containers)
-    - [Oracle Container](#oracle-container)
-    - [Oracle CDB and PDB Setup](#oracle-cdb-and-pdb-setup)
-      - [CDB Setup](#cdb-setup)
-      - [PDB Setup](#pdb-setup)
-        - [Create PDBs](#create-pdbs)
-        - [APEX 5.0.4 Install](#apex-504-install)
-        - [APEX 5.1.3 Install](#apex-513-install)
-    - [ORDS Containers](#ords-containers)
-      - [ORDS 5.0.4](#ords-504)
-      - [ORDS 5.1.3](#ords-513)
-      - [ORDS Container Wrappup](#ords-container-wrappup)
-  - [Useful Commands](#useful-commands)
-    - [Quick Start](#quick-start)
-    - [Docker](#docker)
-    - [Oracle](#oracle)
-      - [Connection Strings](#connection-strings)
-      - [DBA](#dba)
+<!-- TOC depthFrom:2 -->
+
+- [Known Issues and Future Improvements](#known-issues-and-future-improvements)
+- [References](#references)
+- [Background](#background)
+  - [Port Mapping](#port-mapping)
+  - [Passwords](#passwords)
+  - [Download Files](#download-files)
+  - [Laptop Folder Structure](#laptop-folder-structure)
+  - [Oracle Container Registry Setup](#oracle-container-registry-setup)
+- [Setup](#setup)
+  - [Directory structure](#directory-structure)
+  - [Docker Network](#docker-network)
+  - [Docker Images](#docker-images)
+    - [Get Oracle Image](#get-oracle-image)
+    - [ORDS](#ords)
+    - [Docker Image Confirmation](#docker-image-confirmation)
+- [Docker Containers](#docker-containers)
+  - [Oracle Container](#oracle-container)
+  - [Oracle CDB and PDB Setup](#oracle-cdb-and-pdb-setup)
+    - [CDB Setup](#cdb-setup)
+    - [PDB Setup](#pdb-setup)
+      - [Create PDBs](#create-pdbs)
+      - [APEX 5.0.4 Install](#apex-504-install)
+      - [APEX 5.1.3 Install](#apex-513-install)
+  - [ORDS Containers](#ords-containers)
+    - [ORDS 5.0.4](#ords-504)
+    - [ORDS 5.1.3](#ords-513)
+    - [ORDS Container Wrappup](#ords-container-wrappup)
+- [Useful Commands](#useful-commands)
+  - [Quick Start](#quick-start)
+  - [Docker](#docker)
+  - [Oracle](#oracle)
+    - [Connection Strings](#connection-strings)
+    - [DBA](#dba)
 
 <!-- /TOC -->
 
@@ -43,7 +43,7 @@ This document will keep an up to date version of my personal Oracle dockerized d
 
 This is achieved using Oracle 12c containers (not to be confused with Docker containers). If you're not too familiar with Oracle 12c containers I highly recommend reading [this](http://www.oracle.com/technetwork/articles/database/multitenant-part1-pdbs-2193987.html) article which covers Container Databases (CDB) and Pluggable Databases (PDB).
 
-## Known Issues / Future Improvements
+## Known Issues and Future Improvements
 
 - Use Oracle's official ORDS image from the Container Registry
 
