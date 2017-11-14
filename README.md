@@ -1,14 +1,61 @@
 # docker-oracle-setup
+<!-- TOC -->
+
+- [docker-oracle-setup](#docker-oracle-setup)
+  - [Known Issues / Future Improvements](#known-issues-future-improvements)
+  - [References](#references)
+  - [Background](#background)
+    - [Port Mapping](#port-mapping)
+    - [Passwords](#passwords)
+    - [Download Files](#download-files)
+    - [Laptop Folder Structure](#laptop-folder-structure)
+    - [Oracle Container Registry Setup](#oracle-container-registry-setup)
+  - [Setup](#setup)
+    - [Directory structure](#directory-structure)
+    - [Docker Network](#docker-network)
+    - [Docker Images](#docker-images)
+      - [Get Oracle Image](#get-oracle-image)
+      - [ORDS](#ords)
+      - [Docker Image Confirmation](#docker-image-confirmation)
+  - [Docker Containers](#docker-containers)
+    - [Oracle Container](#oracle-container)
+    - [Oracle CDB and PDB Setup](#oracle-cdb-and-pdb-setup)
+      - [CDB Setup](#cdb-setup)
+      - [PDB Setup](#pdb-setup)
+        - [Create PDBs](#create-pdbs)
+        - [APEX 5.0.4 Install](#apex-504-install)
+        - [APEX 5.1.3 Install](#apex-513-install)
+    - [ORDS Containers](#ords-containers)
+      - [ORDS 5.0.4](#ords-504)
+      - [ORDS 5.1.3](#ords-513)
+      - [ORDS Container Wrappup](#ords-container-wrappup)
+  - [Useful Commands](#useful-commands)
+    - [Quick Start](#quick-start)
+    - [Docker](#docker)
+    - [Oracle](#oracle)
+      - [Connection Strings](#connection-strings)
+      - [DBA](#dba)
+
+<!-- /TOC -->
+
 
 This document will keep an up to date version of my personal Oracle dockerized development environment. The main goal is to have one Oracle database with multiple versions of APEX installed. 
 
 This is achieved using Oracle 12c containers (not to be confused with Docker containers). If you're not too familiar with Oracle 12c containers I highly recommend reading [this](http://www.oracle.com/technetwork/articles/database/multitenant-part1-pdbs-2193987.html) article which covers Container Databases (CDB) and Pluggable Databases (PDB).
 
-## Known Issues
-
-TODO section on improvements:
+## Known Issues / Future Improvements
 
 - Use Oracle's official ORDS image from the Container Registry
+
+## References
+
+ The following articles and all my scripts are a result of a combination of the code found in the links.
+ 
+- [APEX and ORDS up and running in....2 steps!](http://joelkallman.blogspot.ca/2017/05/apex-and-ords-up-and-running-in2-steps.html) by [Joel Kallman](https://twitter.com/joelkallman)
+- [Dockerize your APEX development environment](http://roelhartman.blogspot.ca/2017/10/dockerize-your-apex-development.html) by [Roel Hartman](https://twitter.com/RoelH)
+- [Oracle Database 12c now available on Docker](https://sqlmaria.com/2017/04/27/oracle-database-12c-now-available-on-docker/) by [Maria Colgan](https://twitter.com/sqlmaria)
+- [ORDS Docker Setup](https://github.com/lucassampsouza/ords_apex) by [Lucas Souza](http://www.vertech-it.com.br)
+
 
 ## Background
 
@@ -23,8 +70,8 @@ The following port mapping will be used. To help remember the DB version, the da
 Container | Container Port | Laptop Port | Description
 --- | --- | --- | ---
 `oracle` | `1521` | `32122` | TNS listener for Oracle 12.2
-`ords` | `8080` | `32513` | ORDS for APEX 5.1.3
-`ords` | `8080` | `32504` | ORDS for APEX 5.0.4
+`ords-504` | `8080` | `32504` | ORDS for APEX 5.0.4
+`ords-513` | `8080` | `32513` | ORDS for APEX 5.1.3
 
 ### Passwords
 
@@ -33,7 +80,7 @@ Since this setup is for my own development environment (and to keep things simpl
 Container | Username | Password | Description
 --- | --- | --- | ---
 `oracle`  | `sys` |  `Oradoc_db1` | All sys passwords for all PDBs will be the same
-`oracle`  | `admin` |  `oracle` | Workspace `Internal` for all APEX admin
+`oracle`  | `admin` |  `Oradoc_db1` | Workspace `Internal` for all APEX admin
 
 ### Download Files
 
@@ -217,7 +264,9 @@ cd /tmp/apex/5.1.3
 
 The Oracle container database will come with a default PDB (`ORCLPDB1`). We'll leave it alone and create new PDBs for each version of APEX.
 
-##### Build PDBs
+Note I've included the APEX installs in these sections since they're required required for the ORDS containers.
+
+##### Create PDBs
 
 On your laptop connect to the database: `sqlcl sys/Oradoc_db1@localhost:32122:orclcdb as sysdba`
 
@@ -255,7 +304,70 @@ alter pluggable database all save state;
 ```
 
 
-##### APEX 5.13 Install
+##### APEX 5.0.4 Install
+
+```bash
+# On your laptop
+docker exec -it oracle bash -c "source /home/oracle/.bashrc; bash"
+
+# You should now be in the Oracle Docker container
+cd /tmp/apex/5.0.4
+sqlplus sys/Oradoc_db1@localhost/orclpdb504.localdomain as sysdba
+```
+
+```sql
+@apexins.sql SYSAUX SYSAUX TEMP /i/
+
+-- APEX REST configuration
+-- TODO I got an error running following script. Just re-ran again and all goo
+@apex_rest_config_core.sql oracle oracle
+
+-- Required for ORDS install
+alter user apex_public_user identified by oracle account unlock;
+
+-- From Joels blog: http://joelkallman.blogspot.ca/2017/05/apex-and-ords-up-and-running-in2-steps.html
+declare
+    l_acl_path varchar2(4000);
+    l_apex_schema varchar2(100);
+begin
+    for c1 in (select schema
+                 from sys.dba_registry
+                where comp_id = 'APEX') loop
+        l_apex_schema := c1.schema;
+    end loop;
+    sys.dbms_network_acl_admin.append_host_ace(
+        host => '*',
+        ace => xs$ace_type(privilege_list => xs$name_list('connect'),
+        principal_name => l_apex_schema,
+        principal_type => xs_acl.ptype_db));
+    commit;
+end;
+/
+
+-- Setup APEX Admin password
+begin
+    apex_util.set_security_group_id( 10 );
+    apex_util.create_user(
+        p_user_name => 'ADMIN',
+        p_email_address => 'martin@talkapex.com',
+        p_web_password => 'Oradoc_db1',
+        p_developer_privs => 'ADMIN',
+        p_change_password_on_first_use => 'N');
+    apex_util.set_security_group_id( null );
+    commit;
+end;
+/
+-- Exit SQL
+exit
+```
+
+```bash
+# You can now exit bash on the container
+exit
+```
+
+##### APEX 5.1.3 Install
+
 
 ```bash
 # On your laptop
@@ -263,26 +375,145 @@ docker exec -it oracle bash -c "source /home/oracle/.bashrc; bash"
 
 # You should now be in the Oracle Docker container
 cd /tmp/apex/5.1.3
-sqlplus sys/Oradoc_db1@localhost/orclpdb513.localdomain as sysdba
-@apexins.sql SYSAUX SYSAUX TEMP /i/
-
-
+sqlplus sys/Oradoc_db1@localhost/orclpd513.localdomain as sysdba
 ```
 
+```sql
+@apexins.sql SYSAUX SYSAUX TEMP /i/
+
+-- APEX REST configuration
+@apex_rest_config_core.sql oracle oracle
+
+-- Required for ORDS install
+alter user apex_public_user identified by oracle account unlock;
+
+-- From Joels blog: http://joelkallman.blogspot.ca/2017/05/apex-and-ords-up-and-running-in2-steps.html
+declare
+    l_acl_path varchar2(4000);
+    l_apex_schema varchar2(100);
+begin
+    for c1 in (select schema
+                 from sys.dba_registry
+                where comp_id = 'APEX') loop
+        l_apex_schema := c1.schema;
+    end loop;
+    sys.dbms_network_acl_admin.append_host_ace(
+        host => '*',
+        ace => xs$ace_type(privilege_list => xs$name_list('connect'),
+        principal_name => l_apex_schema,
+        principal_type => xs_acl.ptype_db));
+    commit;
+end;
+/
+
+-- Setup APEX Admin password
+begin
+    apex_util.set_security_group_id( 10 );
+    apex_util.create_user(
+        p_user_name => 'ADMIN',
+        p_email_address => 'martin@talkapex.com',
+        p_web_password => 'Oradoc_db1',
+        p_developer_privs => 'ADMIN',
+        p_change_password_on_first_use => 'N');
+    apex_util.set_security_group_id( null );
+    commit;
+end;
+/
+-- Exit SQL
+exit
+```
+
+```bash
+# You can now exit bash on the container
+exit
+```
+
+### ORDS Containers
+
+Each APEX PDB should have an associated ORDS container. A few notes about each ORDS container:
+
+- Instead of naming the ORDS containers with their version number, they'll be named to reference the cooresponding APEX version. You may want to alter your naming scheme if you plan to test with multiple versions of ORDS.
+
+#### ORDS 5.0.4
+
+```bash
+docker run -t -i \
+  --name ords-504 \
+  --network=oracle_network \
+  -e TZ=America/Edmonton \
+  -e DB_HOSTNAME=oracle \
+  -e DB_PORT=1521 \
+  -e DB_SERVICENAME=orclpdb504.localdomain \
+  -e APEX_PUBLIC_USER_PASS=oracle \
+  -e APEX_LISTENER_PASS=oracle \
+  -e APEX_REST_PASS=oracle \
+  -e ORDS_PASS=oracle \
+  -e SYS_PASS=Oradoc_db1 \
+  --volume ~/docker/apex/5.0.4/images:/usr/local/tomcat/webapps/i \
+  -p 32504:8080 \
+  ords:3.0.12
+```
+
+You should now be able to go to APEX via http://localhost:32504/ords
 
 
+#### ORDS 5.1.3
 
+```bash
+docker run -t -i \
+  --name ords-513 \
+  --network=oracle_network \
+  -e TZ=America/Edmonton \
+  -e DB_HOSTNAME=oracle \
+  -e DB_PORT=1521 \
+  -e DB_SERVICENAME=orclpdb513.localdomain \
+  -e APEX_PUBLIC_USER_PASS=oracle \
+  -e APEX_LISTENER_PASS=oracle \
+  -e APEX_REST_PASS=oracle \
+  -e ORDS_PASS=oracle \
+  -e SYS_PASS=Oradoc_db1 \
+  --volume ~/docker/apex/5.1.3/images:/usr/local/tomcat/webapps/i \
+  -p 32513:8080 \
+  ords:3.0.12
+```
+
+You should now be able to go to APEX via http://localhost:32513/ords
+
+#### ORDS Container Wrappup
+
+When `run`ning ORDS containers for the first time they'll run in the forground as the `-d` (`detached`) option was not provided (see [Docker documentation](https://docs.docker.com/engine/reference/run/#detached--d) for more info on this option). It's good to have it run in the forground as it's easy to spot any issues with ORDS connecting to the database.
+
+To stop stop the container hit `ctrl+c`. To restart the ORDS container run `docker start ords-513`.
 
 ## Useful Commands
 
 This section covers some useful commands for Docker and managing Oracle CDB and PDBs.
 
+### Quick Start
+
+To quickly start and stop the docker containers:
+
+```bash
+# Start
+docker start oracle
+docker start ords-504
+docker start ords-513
+
+# Stop
+docker start -t 200 oracle
+docker start -t 200 ords-504
+docker start -t 200 ords-513
+
+```
+
 ### Docker
 
 ```bash
-# Docker stop all containers
-docker stop $(docker ps)
-docker stop $(docker ps -aq)
+# Docker stop conainer with timeout (for Oracle to shutdown properly)
+docker stop -t 200 oracle
+
+# Docker stop all containers 
+docker stop -t 200 $(docker ps)
 
 # Delete all containers
 docker rm $(docker ps -aq)
@@ -296,11 +527,26 @@ docker rmi $(docker images -a)
 
 ### Oracle
 
-TODO connection strings
+#### Connection Strings
 
 ```bash
+sqlcl sys/Oradoc_db1@localhost:32122:orclcdb as sysdba
+sqlcl sys/Oradoc_db1@localhost:32122/orclpdb504.localdomain as sysdba
+sqlcl sys/Oradoc_db1@localhost:32122/orclpdb513.localdomain as sysdba
+```
+
+#### DBA
+
+```sql
 
 # Drop PDB
 drop pluggable database orclpdb513 including datafiles;
 drop pluggable database orclpdb504 including datafiles;
+
+# Create user (as sys)
+-- Create account to develop with
+define new_user = 'martin'
+create user &new_user. identified by &new_user. container = current;
+grant connect, resource, create any context to &new_user;
+alter user &new_user quota unlimited on users;
 ```
