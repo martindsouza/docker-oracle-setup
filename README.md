@@ -1,5 +1,9 @@
 # docker-oracle-setup
 
+This document will keep an up to date version of my personal Oracle dockerized development environment. The main goal is to have one Oracle database with multiple versions of APEX installed. 
+
+This is achieved using Oracle 12c containers (not to be confused with Docker containers). If you're not too familiar with Oracle 12c containers I highly recommend reading [this](http://www.oracle.com/technetwork/articles/database/multitenant-part1-pdbs-2193987.html) article which covers Container Databases (CDB) and Pluggable Databases (PDB).
+
 <!-- TOC depthFrom:2 -->
 
 - [Known Issues and Future Improvements](#known-issues-and-future-improvements)
@@ -39,9 +43,6 @@
 <!-- /TOC -->
 
 
-This document will keep an up to date version of my personal Oracle dockerized development environment. The main goal is to have one Oracle database with multiple versions of APEX installed. 
-
-This is achieved using Oracle 12c containers (not to be confused with Docker containers). If you're not too familiar with Oracle 12c containers I highly recommend reading [this](http://www.oracle.com/technetwork/articles/database/multitenant-part1-pdbs-2193987.html) article which covers Container Databases (CDB) and Pluggable Databases (PDB).
 
 ## Known Issues and Future Improvements
 
@@ -90,7 +91,7 @@ Application | Description
 --- | ---
 [APEX 5.1.3](http://www.oracle.com/technetwork/developer-tools/apex/downloads/index.html) | At the time of writing 5.1.3 was the most recent version.
 [APEX 5.0.4](http://www.oracle.com/technetwork/developer-tools/apex/downloads/all-archives-099381.html) | This is the APEX archive page. Click on the [5.0 Archive](http://www.oracle.com/technetwork/developer-tools/apex/downloads/apex-5-archive-2606313.html) link.
-[ORDS 3.0.12][www.oracle.com/technetwork/developer-tools/rest-data-services/downloads] | At the time of writing ORDS 3.0.12 was the most recent version.
+[ORDS 3.0.12](www.oracle.com/technetwork/developer-tools/rest-data-services/downloads) | At the time of writing ORDS 3.0.12 was the most recent version.
 
 
 ### Laptop Folder Structure
@@ -522,7 +523,15 @@ docker rm $(docker ps -aq)
 docker rmi $(docker images -a)
 
 
+# Docker Network
+# List
+docker network ls
+
+# See containers on network
+docker network inspect oracle_network
 ```
+
+
 
 
 ### Oracle
