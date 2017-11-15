@@ -200,7 +200,8 @@ unzip ~/docker/ords/ords.3.0.12.263.15.32.zip ords.war
 # Build the Docker Image
 docker build -t ords:3.0.12 .
 
-# Can also use the same concept to build different versions of ORDS. Just use the ords:<version> for tagging
+# Can also use the same concept to build different versions of ORDS. 
+# Just use the ords:<version> for tagging
 ```
 
 #### Docker Image Confirmation
@@ -209,6 +210,7 @@ At this point you should see the following (or similar) output when running `doc
 
 ```
 docker images
+
 REPOSITORY                                          TAG                 IMAGE ID            CREATED             SIZE
 ords                                                3.0.12              a735271f7bf5        17 seconds ago      537MB
 tomcat                                              8.0                 643bbbde6032        7 days ago          456MB
@@ -234,12 +236,15 @@ docker run -d -it \
 -v ~/docker/apex:/tmp/apex \
 container-registry.oracle.com/database/enterprise:12.2.0.1
 
-# Running dockerps will result in:
+# Running docker ps will result in:
 docker ps
 
 CONTAINER ID        IMAGE                                                        COMMAND                  CREATED             STATUS                            PORTS                               NAMES
 6b4d96d63cf5        container-registry.oracle.com/database/enterprise:12.2.0.1   "/bin/sh -c '/bin/..."   4 seconds ago       Up 5 seconds (health: starting)   5500/tcp, 0.0.0.0:32112->1521/tcp   oracle
-M
+
+# More specifically if you need to create a script around this
+# docker inspect --format="{{.State.Health.Status}}" oracle
+# Will give you precise information about the status
 ```
 
 You'll need to run `docker ps` several times until the status is `(healthy)`
@@ -257,8 +262,14 @@ docker exec -it oracle bash -c "source /home/oracle/.bashrc; bash"
 # You should now be in the Oracle Docker container
 cd /tmp/apex/5.1.3
 
+sqlplus sys/Oradoc_db1@localhost/orclcdb.localdomain as sysdba
 
+@apxremov.sql
+-- Exit sqlplus
+exit 
 
+# Exit bash
+exit
 ```
 
 #### PDB Setup
@@ -302,6 +313,9 @@ alter pluggable database orclpdb504 open read write;
 -- alter pluggable database all save state;
 -- alter pluggable database all except pdb$seed open read write
 alter pluggable database all save state;
+
+-- Exit sqlcl
+exit
 ```
 
 
@@ -320,7 +334,8 @@ sqlplus sys/Oradoc_db1@localhost/orclpdb504.localdomain as sysdba
 @apexins.sql SYSAUX SYSAUX TEMP /i/
 
 -- APEX REST configuration
--- TODO I got an error running following script. Just re-ran again and all goo
+-- For APEX 5.0.4 I get an error when running the statement below
+-- Just login and re-run
 @apex_rest_config_core.sql oracle oracle
 
 -- Required for ORDS install
@@ -376,7 +391,7 @@ docker exec -it oracle bash -c "source /home/oracle/.bashrc; bash"
 
 # You should now be in the Oracle Docker container
 cd /tmp/apex/5.1.3
-sqlplus sys/Oradoc_db1@localhost/orclpd513.localdomain as sysdba
+sqlplus sys/Oradoc_db1@localhost/orclpdb513.localdomain as sysdba
 ```
 
 ```sql
@@ -540,6 +555,7 @@ docker network inspect oracle_network
 
 ```bash
 sqlcl sys/Oradoc_db1@localhost:32122:orclcdb as sysdba
+sqlcl sys/Oradoc_db1@localhost:32122/orclpdb1.localdomain as sysdba
 sqlcl sys/Oradoc_db1@localhost:32122/orclpdb504.localdomain as sysdba
 sqlcl sys/Oradoc_db1@localhost:32122/orclpdb513.localdomain as sysdba
 ```
