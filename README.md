@@ -554,7 +554,7 @@ docker network inspect oracle_network
 #### Connection Strings
 
 ```bash
-sqlcl sys/Oradoc_db1@localhost:32122:orclcdb as sysdba
+sqlcl sys/Oradoc_db1@localhost:32122:orclcdb.localdomain as sysdba
 sqlcl sys/Oradoc_db1@localhost:32122/orclpdb1.localdomain as sysdba
 sqlcl sys/Oradoc_db1@localhost:32122/orclpdb504.localdomain as sysdba
 sqlcl sys/Oradoc_db1@localhost:32122/orclpdb513.localdomain as sysdba
