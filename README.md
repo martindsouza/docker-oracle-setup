@@ -39,6 +39,7 @@ This is achieved using Oracle 12c containers (not to be confused with Docker con
   - [Oracle](#oracle)
     - [Connection Strings](#connection-strings)
     - [DBA](#dba)
+    - [Sample Data](#sample-data)
 
 <!-- /TOC -->
 
@@ -574,4 +575,12 @@ define new_user = 'martin'
 create user &new_user. identified by &new_user. container = current;
 grant connect, resource, create any context to &new_user;
 alter user &new_user quota unlimited on users;
+```
+
+#### Sample Data
+
+Using SQLcl you can create the `dept` and `emp` table your schema using the following script:
+
+```sql
+@https://raw.githubusercontent.com/OraOpenSource/OXAR/master/oracle/emp_dept.sql
 ```
