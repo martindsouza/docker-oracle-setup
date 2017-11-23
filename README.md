@@ -517,9 +517,9 @@ docker start ords-504
 docker start ords-513
 
 # Stop
-docker start -t 200 oracle
-docker start -t 200 ords-504
-docker start -t 200 ords-513
+docker stop -t 200 oracle
+docker stop -t 200 ords-504
+docker stop -t 200 ords-513
 
 ```
 
