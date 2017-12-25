@@ -92,7 +92,7 @@ Application | Description
 --- | ---
 [APEX 5.1.3](http://www.oracle.com/technetwork/developer-tools/apex/downloads/index.html) | At the time of writing 5.1.3 was the most recent version.
 [APEX 5.0.4](http://www.oracle.com/technetwork/developer-tools/apex/downloads/all-archives-099381.html) | This is the APEX archive page. Click on the [5.0 Archive](http://www.oracle.com/technetwork/developer-tools/apex/downloads/apex-5-archive-2606313.html) link.
-[ORDS 3.0.12](www.oracle.com/technetwork/developer-tools/rest-data-services/downloads) | At the time of writing ORDS 3.0.12 was the most recent version.
+[ORDS 3.0.12](http://www.oracle.com/technetwork/developer-tools/rest-data-services/downloads) | At the time of writing ORDS 3.0.12 was the most recent version.
 
 
 ### Laptop Folder Structure
