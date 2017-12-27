@@ -248,7 +248,7 @@ CONTAINER ID        IMAGE                                                       
 # Will give you precise information about the status
 ```
 
-You'll need to run `docker ps` several times until the status is `(healthy)`. Before you see `(healthy)` the status will be `(unhealthy)` and this is normal. You will still see how the `~/docker/oracle` directory increases in size.
+You'll need to run `docker ps` several times until the status is `(healthy)`. Before you see `(healthy)`, the status will be `(unhealthy)`. This is normal. You will be able to monitor the `~/docker/oracle` directory increases in size.
 
 ### Oracle CDB and PDB Setup
 
