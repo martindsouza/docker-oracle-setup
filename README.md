@@ -169,7 +169,7 @@ Two images are required to get the setup working. One for Oracle and one for ORD
 
 #### Get Oracle Image
 
-*If you haven't already done so already read above about the `container-registry.oracle.com`.*
+*If you haven't already done so already read above about the `container-registry.oracle.com`. You won't be able to pull the container until you agree to the Terms and Conditions.*
 
 ```bash
 # Login to Oracle's container registry
@@ -248,7 +248,7 @@ CONTAINER ID        IMAGE                                                       
 # Will give you precise information about the status
 ```
 
-You'll need to run `docker ps` several times until the status is `(healthy)`
+You'll need to run `docker ps` several times until the status is `(healthy)`. Before you see `(healthy)` the status will be `(unhealthy)` and this is normal. You will still see how the `~/docker/oracle` directory increases in size.
 
 ### Oracle CDB and PDB Setup
 
@@ -277,7 +277,7 @@ exit
 
 The Oracle container database will come with a default PDB (`ORCLPDB1`). We'll leave it alone and create new PDBs for each version of APEX.
 
-Note I've included the APEX installs in these sections since they're required required for the ORDS containers.
+Note I've included the APEX installs in these sections since they're required for the ORDS containers.
 
 ##### Create PDBs
 
