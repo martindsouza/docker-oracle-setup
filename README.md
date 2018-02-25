@@ -92,7 +92,7 @@ Application | Description
 --- | ---
 [APEX 5.1.3](http://www.oracle.com/technetwork/developer-tools/apex/downloads/index.html) | At the time of writing 5.1.3 was the most recent version.
 [APEX 5.0.4](http://www.oracle.com/technetwork/developer-tools/apex/downloads/all-archives-099381.html) | This is the APEX archive page. Click on the [5.0 Archive](http://www.oracle.com/technetwork/developer-tools/apex/downloads/apex-5-archive-2606313.html) link.
-[ORDS 3.0.12](www.oracle.com/technetwork/developer-tools/rest-data-services/downloads) | At the time of writing ORDS 3.0.12 was the most recent version.
+[ORDS 3.0.12](http://www.oracle.com/technetwork/developer-tools/rest-data-services/downloads) | At the time of writing ORDS 3.0.12 was the most recent version.
 
 
 ### Laptop Folder Structure
@@ -169,7 +169,7 @@ Two images are required to get the setup working. One for Oracle and one for ORD
 
 #### Get Oracle Image
 
-*If you haven't already done so already read above about the `container-registry.oracle.com`.*
+*If you haven't already done so already read above about the `container-registry.oracle.com`. You won't be able to pull the container until you agree to the Terms and Conditions.*
 
 ```bash
 # Login to Oracle's container registry
@@ -249,7 +249,7 @@ CONTAINER ID        IMAGE                                                       
 # Will give you precise information about the status
 ```
 
-You'll need to run `docker ps` several times until the status is `(healthy)`
+You'll need to run `docker ps` several times until the status is `(healthy)`. Before you see `(healthy)`, the status will be `(unhealthy)`. This is normal. You will be able to monitor the `~/docker/oracle` directory increases in size.
 
 ### Oracle CDB and PDB Setup
 
@@ -278,7 +278,7 @@ exit
 
 The Oracle container database will come with a default PDB (`ORCLPDB1`). We'll leave it alone and create new PDBs for each version of APEX.
 
-Note I've included the APEX installs in these sections since they're required required for the ORDS containers.
+Note I've included the APEX installs in these sections since they're required for the ORDS containers.
 
 ##### Create PDBs
 
