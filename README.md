@@ -192,7 +192,8 @@ The script below will first create the ORDS Docker image then create the contain
 ```bash
 # Uses https://github.com/martindsouza/docker-ords Dockerfile
 cd ~/docker/ords
-git clone git@github.com:martindsouza/docker-ords.git .
+# git clone git@github.com:martindsouza/docker-ords.git .
+git clone https://github.com/martindsouza/docker-ords.git .
 
 cp ~/Downloads/ords.3.0.12.263.15.32.zip ~/docker/ords
 # Only need ords.war from install
