@@ -251,6 +251,8 @@ CONTAINER ID        IMAGE                                                       
 
 You'll need to run `docker ps` several times until the status is `(healthy)`. Before you see `(healthy)`, the status will be `(unhealthy)`. This is normal. You will be able to monitor the `~/docker/oracle` directory increases in size.
 
+You can follow the install by running `docker logs oracle`
+
 ### Oracle CDB and PDB Setup
 
 #### CDB Setup
@@ -538,6 +540,9 @@ docker rm $(docker ps -aq)
 
 # Delete all images
 docker rmi $(docker images -a)
+
+# View docker logs as run is happening where <name> is the name of the container that is running
+docker logs <name>
 
 
 # Docker Network
