@@ -56,8 +56,6 @@ This is achieved using Oracle 12c containers (not to be confused with Docker con
 - [APEX and ORDS up and running in....2 steps!](http://joelkallman.blogspot.ca/2017/05/apex-and-ords-up-and-running-in2-steps.html) by [Joel Kallman](https://twitter.com/joelkallman)
 - [Dockerize your APEX development environment](http://roelhartman.blogspot.ca/2017/10/dockerize-your-apex-development.html) by [Roel Hartman](https://twitter.com/RoelH)
 - [Oracle Database 12c now available on Docker](https://sqlmaria.com/2017/04/27/oracle-database-12c-now-available-on-docker/) by [Maria Colgan](https://twitter.com/sqlmaria)
-- [ORDS Docker Setup](https://github.com/lucassampsouza/ords_apex) by [Lucas Souza](http://www.vertech-it.com.br)
-
 
 ## Background
 
@@ -92,7 +90,7 @@ Application | Description
 --- | ---
 [APEX 5.1.3](http://www.oracle.com/technetwork/developer-tools/apex/downloads/index.html) | At the time of writing 5.1.3 was the most recent version.
 [APEX 5.0.4](http://www.oracle.com/technetwork/developer-tools/apex/downloads/all-archives-099381.html) | This is the APEX archive page. Click on the [5.0 Archive](http://www.oracle.com/technetwork/developer-tools/apex/downloads/apex-5-archive-2606313.html) link.
-[ORDS 3.0.12](http://www.oracle.com/technetwork/developer-tools/rest-data-services/downloads) | At the time of writing ORDS 3.0.12 was the most recent version.
+[ORDS 17.4.1](http://www.oracle.com/technetwork/developer-tools/rest-data-services/downloads) | At the time of writing ORDS 17.4.1 was the most recent version.
 
 
 ### Laptop Folder Structure
@@ -185,26 +183,7 @@ docker pull container-registry.oracle.com/database/enterprise:12.2.0.1
 
 *Oracle has scripts available to build an ORDS image. At the time of writing (11-Nov-2017) there's an issue with the script ([Issue #646](https://github.com/oracle/docker-images/issues/646)) that prevents me from using it. I suspect that Oracle will include a pre-built image on their container registry in the future so I'll update the section with their image when/if it becomes available. In the mean time the image will be built using another script.*
 
-The following assumes that you’ve downloaded ORDS 3.0.12. Referencing the ORDS version so that can create ORDS images for each ORDS release.
-
-The script below will first create the ORDS Docker image then create the containers.
-
-```bash
-# Uses https://github.com/martindsouza/docker-ords Dockerfile
-cd ~/docker/ords
-# git clone git@github.com:martindsouza/docker-ords.git .
-git clone https://github.com/martindsouza/docker-ords.git .
-
-cp ~/Downloads/ords.3.0.12.263.15.32.zip ~/docker/ords
-# Only need ords.war from install
-unzip ~/docker/ords/ords.3.0.12.263.15.32.zip ords.war
-
-# Build the Docker Image
-docker build -t ords:3.0.12 .
-
-# Can also use the same concept to build different versions of ORDS. 
-# Just use the ords:<version> for tagging
-```
+**Important:** I've created a separate [ORDS Docker Image](https://github.com/martindsouza/docker-ords) repo. Since it's being actively updated and to avoid duplication of documentation please refer to the repo to build your ORDS Docker image. **Go through it now to create your ORDS Docker image**.
 
 #### Docker Image Confirmation
 
@@ -214,7 +193,7 @@ At this point you should see the following (or similar) output when running `doc
 docker images
 
 REPOSITORY                                          TAG                 IMAGE ID            CREATED             SIZE
-ords                                                3.0.12              a735271f7bf5        17 seconds ago      537MB
+ords                                                17.4.1              a735271f7bf5        17 seconds ago      537MB
 tomcat                                              8.0                 643bbbde6032        7 days ago          456MB
 container-registry.oracle.com/database/enterprise   12.2.0.1            12a359cd0528        2 months ago        3.44GB
 ```
@@ -452,13 +431,15 @@ exit
 
 Each APEX PDB should have an associated ORDS container. A few notes about each ORDS container:
 
-- Instead of naming the ORDS containers with their version number, they'll be named to reference the cooresponding APEX version. You may want to alter your naming scheme if you plan to test with multiple versions of ORDS.
+- Instead of naming the ORDS containers with their version number, they'll be named to reference the corresponding APEX version. You may want to alter your naming scheme if you plan to test with multiple versions of ORDS.
+- **Important:** Refer to [Docker ORDS](https://github.com/martindsouza/docker-ords) documentation on how to run each ORDS setup. Only modifications will be mentioned in each section below.
 
 #### ORDS 5.0.4
 
 ```bash
-docker run -t -i \
+docker run ...
   --name ords-504 \
+  ... 
   --network=oracle_network \
   -e TZ=America/Edmonton \
   -e DB_HOSTNAME=oracle \
@@ -469,9 +450,7 @@ docker run -t -i \
   -e APEX_REST_PASS=oracle \
   -e ORDS_PASS=oracle \
   -e SYS_PASS=Oradoc_db1 \
-  --volume ~/docker/apex/5.0.4/images:/usr/local/tomcat/webapps/i \
-  -p 32504:8080 \
-  ords:3.0.12
+  ...
 ```
 
 You should now be able to go to APEX via http://localhost:32504/ords
@@ -480,7 +459,7 @@ You should now be able to go to APEX via http://localhost:32504/ords
 #### ORDS 5.1.3
 
 ```bash
-docker run -t -i \
+docker run ...
   --name ords-513 \
   --network=oracle_network \
   -e TZ=America/Edmonton \
@@ -492,16 +471,14 @@ docker run -t -i \
   -e APEX_REST_PASS=oracle \
   -e ORDS_PASS=oracle \
   -e SYS_PASS=Oradoc_db1 \
-  --volume ~/docker/apex/5.1.3/images:/usr/local/tomcat/webapps/i \
-  -p 32513:8080 \
-  ords:3.0.12
+  ...
 ```
 
 You should now be able to go to APEX via http://localhost:32513/ords
 
 #### ORDS Container Wrappup
 
-When `run`ning ORDS containers for the first time they'll run in the forground as the `-d` (`detached`) option was not provided (see [Docker documentation](https://docs.docker.com/engine/reference/run/#detached--d) for more info on this option). It's good to have it run in the forground as it's easy to spot any issues with ORDS connecting to the database.
+When running ORDS containers for the first time they'll run in the foreground as the `-d` (`detached`) option was not provided (see [Docker documentation](https://docs.docker.com/engine/reference/run/#detached--d) for more info on this option). It's good to have it run in the foreground as it's easy to spot any issues with ORDS connecting to the database.
 
 To stop stop the container hit `ctrl+c`. To restart the ORDS container run `docker start ords-513`.
 
