@@ -170,6 +170,11 @@ Two images are required to get the setup working. One for Oracle and one for ORD
 *If you haven't already done so already read above about the `container-registry.oracle.com`. You won't be able to pull the container until you agree to the Terms and Conditions.*
 
 ```bash
+# *** NOTE: container-register.oracle.com is slow
+# Instead you can try the following URLs in its place:
+# container-registry-phx.oracle.com
+# container-registry-ash.oracle.com
+#
 # Login to Oracle's container registry
 docker login container-registry.oracle.com
 
