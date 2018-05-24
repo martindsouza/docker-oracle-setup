@@ -40,6 +40,9 @@ This is achieved using Oracle 12c containers (not to be confused with Docker con
     - [Connection Strings](#connection-strings)
     - [DBA](#dba)
     - [Sample Data](#sample-data)
+- [Common Problems](#common-problems)
+  - [Oracle Docker Container](#oracle-docker-container)
+    - [Issues writing to `/ORCL` folder](#issues-writing-to-orcl-folder)
 
 <!-- /TOC -->
 
@@ -557,12 +560,22 @@ sqlcl sys/Oradoc_db1@localhost:32122/orclpdb513.localdomain as sysdba
 drop pluggable database orclpdb513 including datafiles;
 drop pluggable database orclpdb504 including datafiles;
 
+# Create tablespace (as PDB DBA)
+create tablespace users
+  datafile 'users-514.dat' 
+    size 100m
+    autoextend on
+    next 20m
+    online
+;
+
 # Create user (as sys)
 -- Create account to develop with
 define new_user = 'martin'
 create user &new_user. identified by &new_user. container = current;
-grant connect, resource, create any context to &new_user;
+grant connect, resource, create job, create view, create any context to &new_user;
 alter user &new_user quota unlimited on users;
+alter user &new_user default tablespace users;
 ```
 
 #### Sample Data
@@ -571,4 +584,35 @@ Using SQLcl you can create the `dept` and `emp` table your schema using the foll
 
 ```sql
 @https://raw.githubusercontent.com/OraOpenSource/OXAR/master/oracle/emp_dept.sql
+```
+
+## Common Problems
+
+### Oracle Docker Container
+
+#### Issues writing to `/ORCL` folder
+
+If you get issues from the `docker logs oracle` command such as:
+
+```bash
+ls: cannot open directory /ORCL: Permission denied
+# or
+mkdir: cannot create directory '/ORCL/u01': Permission denied
+```
+
+It could be due to SE Linux. The following worked for me to get around this:
+
+- [Disable SE Linux](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security-enhanced_linux/sect-security-enhanced_linux-enabling_and_disabling_selinux-disabling_selinux)
+  - Set `SELINUX=disabled` in `/etc/selinux/config`
+  - Reboot host OS (i.e. laptop)
+  - Running `getenforce` should return `Disabled` or `Permissive`
+- Change permission on `~/docker/oracle` and `~/docker/apex` folders
+```bash
+chmod 777 ~/docker/oracle
+chmod 777 ~/docker/apex
+```
+- _Optional_ Disable SE Linux on specific folders
+```bash
+chcon -Rt svirt_sandbox_file_t ~/docker/oracle
+chcon -Rt svirt_sandbox_file_t ~/docker/apex
 ```
