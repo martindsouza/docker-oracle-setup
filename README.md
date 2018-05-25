@@ -2,49 +2,49 @@
 
 This document will keep an up to date version of my personal Oracle dockerized development environment. The main goal is to have one Oracle database with multiple versions of APEX installed. 
 
-This is achieved using Oracle 12c containers (not to be confused with Docker containers). If you're not too familiar with Oracle 12c containers I highly recommend reading [this][1] article which covers Container Databases (CDB) and Pluggable Databases (PDB).
+This is achieved using Oracle 12c containers (not to be confused with Docker containers). If you're not too familiar with Oracle 12c containers I highly recommend reading [this](http://www.oracle.com/technetwork/articles/database/multitenant-part1-pdbs-2193987.html) article which covers Container Databases (CDB) and Pluggable Databases (PDB).
 
 <!-- TOC depthFrom:2 -->
 
-- [Known Issues and Future Improvements][2]
-- [References][3]
-- [Background][4]
-  - [Port Mapping][5]
-  - [Passwords][6]
-  - [Download Files][7]
-  - [Laptop Folder Structure][8]
-  - [Oracle Container Registry Setup][9]
-- [Setup][10]
-  - [Directory structure][11]
-  - [Docker Network][12]
-  - [Docker Images][13]
-	- [Get Oracle Image][14]
-	- [ORDS][15]
-	- [Docker Image Confirmation][16]
-- [Docker Containers][17]
-  - [Oracle Container][18]
-  - [Oracle CDB and PDB Setup][19]
-	- [CDB Setup][20]
-	- [PDB Setup][21]
-	  - [Create PDBs][22]
-	  - [APEX 18.1 Install][23]
-	  - [APEX 5.1.3 Install][24]
-	  - [APEX 5.0.4 Install][25]
-  - [ORDS Containers][26]
-	- [ORDS 18.1.0][27]
-	- [ORDS 5.1.3][28]
-	- [ORDS 5.0.4][29]
-	- [ORDS Container Wrappup][30]
-- [Useful Commands][31]
-  - [Quick Start][32]
-  - [Docker][33]
-  - [Oracle][34]
-	- [Connection Strings][35]
-	- [DBA][36]
-	- [Sample Data][37]
-- [Common Problems][38]
-  - [Oracle Docker Container][39]
-	- [Issues writing to `/ORCL` folder][40]
+- [Known Issues and Future Improvements](#known-issues-and-future-improvements)
+- [References](#references)
+- [Background](#background)
+  - [Port Mapping](#port-mapping)
+  - [Passwords](#passwords)
+  - [Download Files](#download-files)
+  - [Laptop Folder Structure](#laptop-folder-structure)
+  - [Oracle Container Registry Setup](#oracle-container-registry-setup)
+- [Setup](#setup)
+  - [Directory structure](#directory-structure)
+  - [Docker Network](#docker-network)
+  - [Docker Images](#docker-images)
+  - [Get Oracle Image](#get-oracle-image)
+  - [ORDS](#ords)
+  - [Docker Image Confirmation](#docker-image-confirmation)
+- [Docker Containers](#docker-containers)
+  - [Oracle Container](#oracle-container)
+  - [Oracle CDB and PDB Setup](#oracle-cdb-and-pdb-setup)
+  - [CDB Setup](#cdb-setup)
+  - [PDB Setup](#pdb-setup)
+    - [Create PDBs](#create-pdbs)
+    - [APEX 18.1 Install](#apex-181-install)
+    - [APEX 5.1.3 Install](#apex-513-install)
+    - [APEX 5.0.4 Install](#apex-504-install)
+  - [ORDS Containers](#ords-containers)
+  - [ORDS 18.1.0](#ords-1810)
+  - [ORDS 5.1.3](#ords-513)
+  - [ORDS 5.0.4](#ords-504)
+  - [ORDS Container Wrappup](#ords-container-wrappup)
+- [Useful Commands](#useful-commands)
+  - [Quick Start](#quick-start)
+  - [Docker](#docker)
+  - [Oracle](#oracle)
+  - [Connection Strings](#connection-strings)
+  - [DBA](#dba)
+  - [Sample Data](#sample-data)
+- [Common Problems](#common-problems)
+  - [Oracle Docker Container](#oracle-docker-container)
+  - [Issues writing to `/ORCL` folder](#issues-writing-to-orcl-folder)
 
 <!-- /TOC -->
 
@@ -58,15 +58,15 @@ This is achieved using Oracle 12c containers (not to be confused with Docker con
 
  The following articles and all my scripts are a result of a combination of the code found in the links.
  
-- [APEX and ORDS up and running in....2 steps!][41] by [Joel Kallman][42]
-- [Dockerize your APEX development environment][43] by [Roel Hartman][44]
-- [Oracle Database 12c now available on Docker][45] by [Maria Colgan][46]
+- [APEX and ORDS up and running in....2 steps!](http://joelkallman.blogspot.ca/2017/05/apex-and-ords-up-and-running-in2-steps.html) by [Joel Kallman](https://twitter.com/joelkallman)
+- [Dockerize your APEX development environment](http://roelhartman.blogspot.ca/2017/10/dockerize-your-apex-development.html) by [Roel Hartman](https://twitter.com/RoelH)
+- [Oracle Database 12c now available on Docker](https://sqlmaria.com/2017/04/27/oracle-database-12c-now-available-on-docker/) by [Maria Colgan](https://twitter.com/sqlmaria)
 
 ## Background
 
 - All my scripts are Linux / MacOS focused. If you use a Windows machine you'll need to translate
 - I specifically made reference to "your laptop" to emphasize what was run "on your machine" vs "in a docker container"
-- I use [SQLcl][47] instead of SQLplus on my laptop. I've also renamed the default command `sql` to `sqlcl`. You can use `sqlplus` or follow my [sqlcl install instructions][48].
+- I use [SQLcl](http://www.oracle.com/technetwork/developer-tools/sqlcl/overview/index.html) instead of SQLplus on my laptop. I've also renamed the default command `sql` to `sqlcl`. You can use `sqlplus` or follow my [sqlcl install instructions](http://www.talkapex.com/2015/04/installing-sqlcl/).
 
 ### Port Mapping
 
@@ -94,10 +94,10 @@ Due to licensing restrictions I can't host/provide these files in Github or else
 
 Application | Description
 --- | ---
-[APEX 18.1][49] | At the time of writing, 18.1 is the most recent version.
-[APEX 5.1.3][50] | Find it in the APEX archive page.
-[APEX 5.0.4][51] | Find it in the APEX archive page.
-[ORDS 18.1.1][52] | At the time of writing ORDS 18.1.1 was the most recent version.
+[APEX 18.1](http://www.oracle.com/technetwork/developer-tools/apex/downloads/index.html) | At the time of writing, 18.1 is the most recent version.
+[APEX 5.1.3](http://www.oracle.com/technetwork/developer-tools/apex/downloads/apex-51-archive-3661848.html) | Find it in the APEX archive page.
+[APEX 5.0.4](http://www.oracle.com/technetwork/developer-tools/apex/downloads/apex-5-archive-2606313.html) | Find it in the APEX archive page.
+[ORDS 18.1.1](http://www.oracle.com/technetwork/developer-tools/rest-data-services/downloads) | At the time of writing ORDS 18.1.1 was the most recent version.
 
 
 ### Laptop Folder Structure
@@ -117,7 +117,7 @@ Path | Description
 
 ### Oracle Container Registry Setup
 
-To work with Oracle's licensing for docker (and to avoid manually building images yourself) you'll need to login to the [container-registry.oracle.com][53] and use your Oracle Technology Network (OTN) login and register.
+To work with Oracle's licensing for docker (and to avoid manually building images yourself) you'll need to login to the [container-registry.oracle.com](https://container-registry.oracle.com) and use your Oracle Technology Network (OTN) login and register.
 
 One logged in go to `Database > Enterprise` and read the license agreement. If you agree to the Terms and Conditions click the Accept button.
 
@@ -197,9 +197,9 @@ docker pull container-registry.oracle.com/database/enterprise:12.2.0.1
 
 #### ORDS
 
-*Oracle has scripts available to build an ORDS image. At the time of writing (11-Nov-2017) there's an issue with the script ([Issue #646][54]) that prevents me from using it. I suspect that Oracle will include a pre-built image on their container registry in the future so I'll update the section with their image when/if it becomes available. In the mean time the image will be built using another script.*
+*Oracle has scripts available to build an ORDS image. At the time of writing (11-Nov-2017) there's an issue with the script ([Issue #646](https://github.com/oracle/docker-images/issues/646)) that prevents me from using it. I suspect that Oracle will include a pre-built image on their container registry in the future so I'll update the section with their image when/if it becomes available. In the mean time the image will be built using another script.*
 
-**Important:** I've created a separate [ORDS Docker Image][55] repo. Since it's being actively updated and to avoid duplication of documentation please refer to the repo to build your ORDS Docker image. **Go through it now to create your ORDS Docker image**.
+**Important:** I've created a separate [ORDS Docker Image](https://github.com/martindsouza/docker-ords) repo. Since it's being actively updated and to avoid duplication of documentation please refer to the repo to build your ORDS Docker image. **Go through it now to create your ORDS Docker image**.
 
 #### Docker Image Confirmation
 
@@ -221,7 +221,7 @@ Now that the setup is complete we can create all the Docker containers
 
 ### Oracle Container
 
-Adding the `-e TZ` option will set the appropriate timezone for the OS and the database. A full list of timezones can be found [here][56]. If excluded it will default to UTC.
+Adding the `-e TZ` option will set the appropriate timezone for the OS and the database. A full list of timezones can be found [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). If excluded it will default to UTC.
 
 ```bash
 docker run -d -it \
@@ -252,7 +252,7 @@ You can follow the install by running `docker logs oracle`
 
 #### CDB Setup
 
-Starting in Oracle 12.2 the database should not come pre-installed with APEX. [Joel Kallman][57] wrote an [article][58] about why this. For some reason the container from Oracle comes with APEX 5.1.3 installed in the CDB. It must first be removed.
+Starting in Oracle 12.2 the database should not come pre-installed with APEX. [Joel Kallman](https://twitter.com/joelkallman) wrote an [article](http://joelkallman.blogspot.ca/2016/03/an-important-change-coming-for-oracle.html) about why this. For some reason the container from Oracle comes with APEX 5.1.3 installed in the CDB. It must first be removed.
 
 ```bash
 # On your laptop:
@@ -513,7 +513,7 @@ exit
 Each APEX PDB should have an associated ORDS container. A few notes about each ORDS container:
 
 - Instead of naming the ORDS containers with their version number, they'll be named to reference the corresponding APEX version. You may want to alter your naming scheme if you plan to test with multiple versions of ORDS.
-- **Important:** Refer to [Docker ORDS][59] documentation on how to run each ORDS setup. Only modifications will be mentioned in each section below.
+- **Important:** Refer to [Docker ORDS](https://github.com/martindsouza/docker-ords) documentation on how to run each ORDS setup. Only modifications will be mentioned in each section below.
 
 #### ORDS 18.1.0
 
@@ -533,7 +533,7 @@ docker run ...
   ...
 ```
 
-You should now be able to go to APEX via [http://localhost:31810/ords][60]
+You should now be able to go to APEX via [http://localhost:31810/ords](http://localhost:32181/ords)
 
 #### ORDS 5.1.3
 
@@ -579,7 +579,7 @@ You should now be able to go to APEX via http://localhost:32504/ords
 
 #### ORDS Container Wrappup
 
-When running ORDS containers for the first time they'll run in the foreground as the `-d` (`detached`) option was not provided (see [Docker documentation][61] for more info on this option). It's good to have it run in the foreground as it's easy to spot any issues with ORDS connecting to the database.
+When running ORDS containers for the first time they'll run in the foreground as the `-d` (`detached`) option was not provided (see [Docker documentation](https://docs.docker.com/engine/reference/run/#detached--d) for more info on this option). It's good to have it run in the foreground as it's easy to spot any issues with ORDS connecting to the database.
 
 To stop stop the container hit `ctrl+c`. To restart the ORDS container run `docker start ords-1810`.
 
@@ -697,7 +697,7 @@ mkdir: cannot create directory '/ORCL/u01': Permission denied
 
 It could be due to SE Linux. The following worked for me to get around this:
 
-- [Disable SE Linux][62]
+- [Disable SE Linux](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security-enhanced_linux/sect-security-enhanced_linux-enabling_and_disabling_selinux-disabling_selinux)
   - Set `SELINUX=disabled` in `/etc/selinux/config`
   - Reboot host OS (i.e. laptop)
   - Running `getenforce` should return `Disabled` or `Permissive`
@@ -711,66 +711,3 @@ chmod 777 ~/docker/apex
 chcon -Rt svirt_sandbox_file_t ~/docker/oracle
 chcon -Rt svirt_sandbox_file_t ~/docker/apex
 ```
-
-[1]:	http://www.oracle.com/technetwork/articles/database/multitenant-part1-pdbs-2193987.html
-[2]:	#known-issues-and-future-improvements
-[3]:	#references
-[4]:	#background
-[5]:	#port-mapping
-[6]:	#passwords
-[7]:	#download-files
-[8]:	#laptop-folder-structure
-[9]:	#oracle-container-registry-setup
-[10]:	#setup
-[11]:	#directory-structure
-[12]:	#docker-network
-[13]:	#docker-images
-[14]:	#get-oracle-image
-[15]:	#ords
-[16]:	#docker-image-confirmation
-[17]:	#docker-containers
-[18]:	#oracle-container
-[19]:	#oracle-cdb-and-pdb-setup
-[20]:	#cdb-setup
-[21]:	#pdb-setup
-[22]:	#create-pdbs
-[23]:	#apex-181-install
-[24]:	#apex-513-install
-[25]:	#apex-504-install
-[26]:	#ords-containers
-[27]:	#ords-1810
-[28]:	#ords-513
-[29]:	#ords-504
-[30]:	#ords-container-wrappup
-[31]:	#useful-commands
-[32]:	#quick-start
-[33]:	#docker
-[34]:	#oracle
-[35]:	#connection-strings
-[36]:	#dba
-[37]:	#sample-data
-[38]:	#common-problems
-[39]:	#oracle-docker-container
-[40]:	#issues-writing-to-orcl-folder
-[41]:	http://joelkallman.blogspot.ca/2017/05/apex-and-ords-up-and-running-in2-steps.html
-[42]:	https://twitter.com/joelkallman
-[43]:	http://roelhartman.blogspot.ca/2017/10/dockerize-your-apex-development.html
-[44]:	https://twitter.com/RoelH
-[45]:	https://sqlmaria.com/2017/04/27/oracle-database-12c-now-available-on-docker/
-[46]:	https://twitter.com/sqlmaria
-[47]:	http://www.oracle.com/technetwork/developer-tools/sqlcl/overview/index.html
-[48]:	http://www.talkapex.com/2015/04/installing-sqlcl/
-[49]:	http://www.oracle.com/technetwork/developer-tools/apex/downloads/index.html
-[50]:	http://www.oracle.com/technetwork/developer-tools/apex/downloads/apex-51-archive-3661848.html
-[51]:	http://www.oracle.com/technetwork/developer-tools/apex/downloads/apex-5-archive-2606313.html
-[52]:	http://www.oracle.com/technetwork/developer-tools/rest-data-services/downloads
-[53]:	https://container-registry.oracle.com
-[54]:	https://github.com/oracle/docker-images/issues/646
-[55]:	https://github.com/martindsouza/docker-ords
-[56]:	https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-[57]:	https://twitter.com/joelkallman
-[58]:	http://joelkallman.blogspot.ca/2016/03/an-important-change-coming-for-oracle.html
-[59]:	https://github.com/martindsouza/docker-ords
-[60]:	http://localhost:32181/ords
-[61]:	https://docs.docker.com/engine/reference/run/#detached--d
-[62]:	https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security-enhanced_linux/sect-security-enhanced_linux-enabling_and_disabling_selinux-disabling_selinux
