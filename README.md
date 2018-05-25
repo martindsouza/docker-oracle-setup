@@ -18,33 +18,33 @@ This is achieved using Oracle 12c containers (not to be confused with Docker con
   - [Directory structure](#directory-structure)
   - [Docker Network](#docker-network)
   - [Docker Images](#docker-images)
-  - [Get Oracle Image](#get-oracle-image)
-  - [ORDS](#ords)
-  - [Docker Image Confirmation](#docker-image-confirmation)
+    - [Get Oracle Image](#get-oracle-image)
+    - [ORDS](#ords)
+    - [Docker Image Confirmation](#docker-image-confirmation)
 - [Docker Containers](#docker-containers)
   - [Oracle Container](#oracle-container)
   - [Oracle CDB and PDB Setup](#oracle-cdb-and-pdb-setup)
-  - [CDB Setup](#cdb-setup)
-  - [PDB Setup](#pdb-setup)
-    - [Create PDBs](#create-pdbs)
-    - [APEX 18.1 Install](#apex-181-install)
-    - [APEX 5.1.3 Install](#apex-513-install)
-    - [APEX 5.0.4 Install](#apex-504-install)
+    - [CDB Setup](#cdb-setup)
+    - [PDB Setup](#pdb-setup)
+      - [Create PDBs](#create-pdbs)
+      - [APEX 18.1.0 Install](#apex-1810-install)
+      - [APEX 5.1.3 Install](#apex-513-install)
+      - [APEX 5.0.4 Install](#apex-504-install)
   - [ORDS Containers](#ords-containers)
-  - [ORDS 18.1.0](#ords-1810)
-  - [ORDS 5.1.3](#ords-513)
-  - [ORDS 5.0.4](#ords-504)
-  - [ORDS Container Wrappup](#ords-container-wrappup)
+    - [ORDS 18.1.0](#ords-1810)
+    - [ORDS 5.1.3](#ords-513)
+    - [ORDS 5.0.4](#ords-504)
+    - [ORDS Container Wrappup](#ords-container-wrappup)
 - [Useful Commands](#useful-commands)
   - [Quick Start](#quick-start)
   - [Docker](#docker)
   - [Oracle](#oracle)
-  - [Connection Strings](#connection-strings)
-  - [DBA](#dba)
-  - [Sample Data](#sample-data)
+    - [Connection Strings](#connection-strings)
+    - [DBA](#dba)
+    - [Sample Data](#sample-data)
 - [Common Problems](#common-problems)
   - [Oracle Docker Container](#oracle-docker-container)
-  - [Issues writing to `/ORCL` folder](#issues-writing-to-orcl-folder)
+    - [Issues writing to `/ORCL` folder](#issues-writing-to-orcl-folder)
 
 <!-- /TOC -->
 
@@ -210,7 +210,6 @@ docker images
 
 REPOSITORY                                          TAG                 IMAGE ID            CREATED             SIZE
 ords                                                18.1.1              a735271f7bf5        17 seconds ago      537MB
-tomcat                                              8.0                 643bbbde6032        7 days ago          456MB
 container-registry.oracle.com/database/enterprise   12.2.0.1            12a359cd0528        2 months ago        3.44GB
 ```
 
@@ -512,12 +511,15 @@ exit
 
 Each APEX PDB should have an associated ORDS container. A few notes about each ORDS container:
 
-- Instead of naming the ORDS containers with their version number, they'll be named to reference the corresponding APEX version. You may want to alter your naming scheme if you plan to test with multiple versions of ORDS.
+- Instead of naming the ORDS containers with their version number, they'll be named to reference the corresponding APEX version (example `ords-504` will be used to reference the PDB hosing APEX `5.0.4`). You may want to alter your naming scheme if you plan to test with multiple versions of ORDS.
 - **Important:** Refer to [Docker ORDS](https://github.com/martindsouza/docker-ords) documentation on how to run each ORDS setup. Only modifications will be mentioned in each section below.
 
 #### ORDS 18.1.0
 
 ```bash
+-- Note: THIS IS NOT A COMPLETE docker run command
+-- Please reference https://github.com/martindsouza/docker-ords for full docker run commands
+-- The purpose of this is to highlight the passwords and connection strings to use for each PDB 
 docker run ...
   --name ords-1810 \
   --network=oracle_network \
@@ -538,6 +540,9 @@ You should now be able to go to APEX via [http://localhost:31810/ords](http://lo
 #### ORDS 5.1.3
 
 ```bash
+-- Note: THIS IS NOT A COMPLETE docker run command
+-- Please reference https://github.com/martindsouza/docker-ords for full docker run commands
+-- The purpose of this is to highlight the passwords and connection strings to use for each PDB
 docker run ...
   --name ords-513 \
   --network=oracle_network \
@@ -558,6 +563,9 @@ You should now be able to go to APEX via http://localhost:32513/ords
 #### ORDS 5.0.4
 
 ```bash
+-- Note: THIS IS NOT A COMPLETE docker run command
+-- Please reference https://github.com/martindsouza/docker-ords for full docker run commands
+-- The purpose of this is to highlight the passwords and connection strings to use for each PDB
 docker run ...
   --name ords-504 \
   ... 
